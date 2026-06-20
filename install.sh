@@ -1,15 +1,28 @@
 #!/bin/bash
 
-# Get the directory where this script is running
 DOTFILES_DIR=$(pwd)
+BACKUP_DIR="$HOME/.dotfiles_backup"
+
+echo "Creating backup directory at $BACKUP_DIR..."
+mkdir -p "$BACKUP_DIR"
+
+# A function to safely link files
+safe_link() {
+    local filename=$1
+    
+    # Check if the file already exists in the home directory and is NOT a shortcut
+    if [ -f "$HOME/$filename" ] && [ ! -L "$HOME/$filename" ]; then
+        echo "Saving original $filename to $BACKUP_DIR"
+        mv "$HOME/$filename" "$BACKUP_DIR/"
+    fi
+
+    # Now safely create the symlink
+    ln -sf "$DOTFILES_DIR/$filename" "$HOME/$filename"
+}
 
 echo "Setting up DevOps dotfiles..."
+safe_link ".zshrc"
+safe_link ".gitconfig"
+# safe_link ".vimrc"
 
-# Create symlinks (forces replacement if files exist)
-ln -sf "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
-ln -sf "$DOTFILES_DIR/.gitconfig" "$HOME/.gitconfig"
-
-echo "Dotfiles linked successfully!"
-echo "Please restart your terminal or type: source ~/.zshrc"
-
-
+echo "All configurations successfully linked!"
