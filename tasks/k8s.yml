@@ -11,3 +11,9 @@
     name: helm
     classic: yes
   become: true
+
+# - name: Download latest k9s debian package pool cleanly
+#   apt:
+#     name: k9s
+#     state: present
+#   become: true

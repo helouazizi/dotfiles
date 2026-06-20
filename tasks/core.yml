@@ -8,15 +8,13 @@
       - zsh
       - vim
       - htop
-      - jq           # The ultimate CLI tool for parsing JSON data
-      - ripgrep      # Lightning-fast code and text searching tool
-      - tldr         # Simplified, practical alternative to traditional 'man' pages
+      - jq
+      - ripgrep
+      - tldr
+      - unzip
+      - fzf
+      - bat
+      - zoxide       # Simplified, practical alternative to traditional 'man' pages
     state: present
     update_cache: yes
   become: true
-
-- name: Create workspace directories
-  file:
-    path: "{{ ansible_user_dir }}/projects/startup"
-    state: directory
-    mode: '0755'

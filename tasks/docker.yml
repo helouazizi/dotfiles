@@ -46,3 +46,11 @@
     groups: docker
     append: yes
   become: true
+
+- name: Install Lazydocker via official script setup
+  shell: |
+    set -o pipefail
+    curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
+  args:
+    executable: /bin/bash
+    creates: "{{ ansible_user_dir }}/.local/bin/lazydocker"

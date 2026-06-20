@@ -58,3 +58,10 @@ alias pip="pip3"
 export PATH="$HOME/.local/share/fnm:$PATH"
 eval "`fnm env --shell zsh`"
 # END FNM RUNTIME ENGINE MANAGED BLOCK
+# BEGIN MODERN TOOLS INITIALIZATION
+# Alias cat to batcat (Ubuntu installs it under batcat to avoid naming conflicts)
+alias cat="batcat --style=plain"
+
+# Initialize zoxide smart directory jumper
+eval "$(zoxide init zsh)"
+# END MODERN TOOLS INITIALIZATION

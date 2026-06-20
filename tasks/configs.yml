@@ -33,3 +33,24 @@
     - { name: 'zsh-autosuggestions', repo: 'https://github.com/zsh-users/zsh-autosuggestions' }
     - { name: 'zsh-syntax-highlighting', repo: 'https://github.com/zsh-users/zsh-syntax-highlighting.git' }
   when: omz.stat.exists
+
+
+- name: Move lazydocker to system wide executable path
+  copy:
+    src: "{{ ansible_user_dir }}/.local/bin/lazydocker"
+    dest: "/usr/local/bin/lazydocker"
+    mode: '0755'
+    remote_src: yes
+  become: true
+
+- name: Setup Zoxide and Bat integrations in shell config
+  blockinfile:
+    path: "{{ ansible_user_dir }}/.zshrc"
+    marker: "# {mark} MODERN TOOLS INITIALIZATION"
+    create: yes
+    block: |
+      # Alias cat to batcat (Ubuntu installs it under batcat to avoid naming conflicts)
+      alias cat="batcat --style=plain"
+      
+      # Initialize zoxide smart directory jumper
+      eval "$(zoxide init zsh)"
