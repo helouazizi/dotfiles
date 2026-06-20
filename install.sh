@@ -25,4 +25,9 @@ safe_link ".zshrc"
 safe_link ".gitconfig"
 # safe_link ".vimrc"
 
+# Ensure SSH folder exists and securely link ssh config
+mkdir -p "$HOME/.ssh"
+ln -sf "$DOTFILES_DIR/.ssh/config" "$HOME/.ssh/config"
+chmod 600 "$HOME/.ssh/config" # Restrict permissions (Required by SSH)
+
 echo "All configurations successfully linked!"
