@@ -54,3 +54,7 @@ alias kgn="kubectl get nodes"
 # Python/WSL Fixes
 alias python="python3"
 alias pip="pip3"
+# BEGIN FNM RUNTIME ENGINE MANAGED BLOCK
+export PATH="$HOME/.local/share/fnm:$PATH"
+eval "`fnm env --shell zsh`"
+# END FNM RUNTIME ENGINE MANAGED BLOCK

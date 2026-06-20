@@ -1,0 +1,41 @@
+---
+# --- 1. PYTHON BACKBONE CORE ---
+- name: Install Python3 pip and virtual environment engines
+  apt:
+    name:
+      - python3-pip
+      - python3-venv
+      - python3-full
+    state: present
+  become: true
+
+# --- 2. GO (GOLANG) RUNTIME ---
+- name: Install high-performance Go runtime via apt
+  apt:
+    name: golang-go
+    state: present
+  become: true
+
+# --- 3. NODE.JS VIA FAST NODE MANAGER (FNM) ---
+- name: Check if fnm (Fast Node Manager) is already present
+  stat:
+    path: "{{ ansible_user_dir }}/.local/share/fnm/fnm"
+  register: fnm_binary
+
+- name: Securely download and bootstrap fnm standalone installer
+  shell: |
+    set -o pipefail
+    curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell
+  args:
+    executable: /bin/bash
+  when: not fnm_binary.stat.exists
+
+- name: Append FNM variables to environment configs natively
+  blockinfile:
+    path: "{{ ansible_user_dir }}/.zshrc"
+    marker: "# {mark} FNM RUNTIME ENGINE MANAGED BLOCK"
+    create: yes
+    mode: '0644'
+    block: |
+      export PATH="$HOME/.local/share/fnm:$PATH"
+      eval "`fnm env --shell zsh`"

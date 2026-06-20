@@ -22,3 +22,6 @@
 
     - name: Apply Personal Configurations & Symlinks
       import_tasks: tasks/configs.yml
+
+    - name: Configure DevOps Language Runtimes & Managers
+      import_tasks: tasks/languages.yml
