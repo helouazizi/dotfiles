@@ -1,0 +1,43 @@
+---
+- name: Ensure apt keyrings directory exists
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Download and dearmor HashiCorp GPG key using native shell commands
+  shell: |
+    set -o pipefail
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /etc/apt/keyrings/hashicorp-archive-keyring.gpg
+  args:
+    executable: /bin/bash
+    creates: /etc/apt/keyrings/hashicorp-archive-keyring.gpg
+  become: true
+
+- name: Add HashiCorp Repository using native block configuration
+  blockinfile:
+    path: /etc/apt/sources.list.d/hashicorp.sources
+    create: yes
+    mode: '0644'
+    block: |
+      Types: deb
+      URIs: https://apt.releases.hashicorp.com
+      Suites: noble
+      Components: main
+      Architectures: amd64
+      Signed-By: /etc/apt/keyrings/hashicorp-archive-keyring.gpg
+  become: true
+
+- name: Install Terraform CLI
+  apt:
+    name: terraform
+    state: present
+    update_cache: yes
+  become: true
+
+- name: Install AWS CLI utility via apt
+  apt:
+    name: awscli
+    state: present
+  become: true

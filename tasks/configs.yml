@@ -1,0 +1,35 @@
+---
+# --- 1. CONFIGURATIONS & SYMLINKS ---
+- name: Secure SSH folder structure
+  file:
+    path: "{{ ansible_user_dir }}/.ssh"
+    state: directory
+    mode: '0700'
+
+- name: Link dotfiles to home directories
+  file:
+    src: "{{ dotfiles_dir }}/{{ item.src }}"
+    dest: "{{ ansible_user_dir }}/{{ item.dest }}"
+    state: link
+    force: yes
+  loop:
+    - { src: '.ssh/config', dest: '.ssh/config' }
+    - { src: '.zshrc', dest: '.zshrc' }
+    - { src: '.tmux.conf', dest: '.tmux.conf' }
+    - { src: '.vimrc', dest: '.vimrc' }
+
+# --- 2. OH MY ZSH PLUGINS SETUP ---
+- name: Check for Oh My Zsh installation
+  stat:
+    path: "{{ ansible_user_dir }}/.oh-my-zsh"
+  register: omz
+
+- name: Clone custom productivity plugins
+  git:
+    repo: "{{ item.repo }}"
+    dest: "{{ ansible_user_dir }}/.oh-my-zsh/custom/plugins/{{ item.name }}"
+    depth: 1
+  loop:
+    - { name: 'zsh-autosuggestions', repo: 'https://github.com/zsh-users/zsh-autosuggestions' }
+    - { name: 'zsh-syntax-highlighting', repo: 'https://github.com/zsh-users/zsh-syntax-highlighting.git' }
+  when: omz.stat.exists

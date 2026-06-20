@@ -1,0 +1,13 @@
+---
+- name: Download official Kubernetes kubectl binary
+  get_url:
+    url: "https://dl.k8s.io/release/{{ func_k8s_ver | default('v1.30.0') }}/bin/linux/amd64/kubectl"
+    dest: /usr/local/bin/kubectl
+    mode: '0755'
+  become: true
+
+- name: Install Helm Package Manager via snap
+  snap:
+    name: helm
+    classic: yes
+  become: true

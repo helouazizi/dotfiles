@@ -1,0 +1,24 @@
+---
+- name: Complete Production DevOps Workstation Blueprint
+  hosts: localhost
+  connection: local
+  become: false
+
+  vars:
+    dotfiles_dir: "{{ playbook_dir }}"
+
+  tasks:
+    - name: Configure Core Linux Utilities
+      import_tasks: tasks/core.yml
+
+    - name: Configure Docker Container Ecosystem
+      import_tasks: tasks/docker.yml
+
+    - name: Configure Cloud & IaC Tooling (Terraform/AWS)
+      import_tasks: tasks/cloud.yml
+
+    - name: Configure Kubernetes Control Plane Utilities
+      import_tasks: tasks/k8s.yml
+
+    - name: Apply Personal Configurations & Symlinks
+      import_tasks: tasks/configs.yml
