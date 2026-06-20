@@ -1,32 +1,18 @@
 ---
-- name: Ensure apt keyrings directory exists
-  file:
-    path: /etc/apt/keyrings
-    state: directory
-    mode: '0755'
-  become: true
-
-- name: Download and dearmor HashiCorp GPG key using native shell commands
+- name: Download and dearmor HashiCorp GPG key safely
   shell: |
     set -o pipefail
-    curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /etc/apt/keyrings/hashicorp-archive-keyring.gpg
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
   args:
     executable: /bin/bash
-    creates: /etc/apt/keyrings/hashicorp-archive-keyring.gpg
+    creates: /usr/share/keyrings/hashicorp-archive-keyring.gpg
   become: true
 
-- name: Add HashiCorp Repository using native block configuration
-  blockinfile:
-    path: /etc/apt/sources.list.d/hashicorp.sources
-    create: yes
-    mode: '0644'
-    block: |
-      Types: deb
-      URIs: https://apt.releases.hashicorp.com
-      Suites: noble
-      Components: main
-      Architectures: amd64
-      Signed-By: /etc/apt/keyrings/hashicorp-archive-keyring.gpg
+- name: Add HashiCorp Repository using legacy-safe syntax
+  apt_repository:
+    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com noble main"
+    state: present
+    filename: hashicorp
   become: true
 
 - name: Install Terraform CLI
