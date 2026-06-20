@@ -22,8 +22,35 @@
     update_cache: yes
   become: true
 
-- name: Install AWS CLI utility via apt
-  apt:
-    name: awscli
-    state: present
-  become: true
+- name: Check if AWS CLI v2 is already installed
+  command: aws --version
+  register: aws_check
+  ignore_errors: true
+  changed_when: false
+
+- name: Download and execute official AWS CLI v2 standalone installer
+  block:
+    - name: Download AWS CLI v2 installation archive
+      get_url:
+        url: "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
+        dest: "/tmp/awscliv2.zip"
+        mode: '0644'
+
+    - name: Extract AWS CLI v2 package bundle
+      unarchive:
+        src: "/tmp/awscliv2.zip"
+        dest: "/tmp"
+        remote_src: yes
+
+    - name: Run official installation script
+      command: "/tmp/aws/install"
+      become: true
+
+    - name: Clean up temporary installation assets
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "/tmp/awscliv2.zip"
+        - "/tmp/aws"
+  when: aws_check.rc != 0
