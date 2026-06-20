@@ -23,7 +23,8 @@ safe_link() {
 echo "Setting up DevOps dotfiles..."
 safe_link ".zshrc"
 safe_link ".gitconfig"
-# safe_link ".vimrc"
+safe_link ".vimrc"
+safe_link ".tmux.conf"
 
 # Ensure SSH folder exists and securely link ssh config
 mkdir -p "$HOME/.ssh"
